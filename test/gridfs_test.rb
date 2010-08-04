@@ -133,6 +133,13 @@ class Rack::GridFSTest < Test::Unit::TestCase
         assert last_response.ok?
         assert_equal 'image/jpeg', last_response.content_type
       end
+      
+      should "work when filename information is included after the id" do
+        image_id = load_artifact('3wolfmoon.jpg', 'image/jpeg')
+        get "/gridfs/#{image_id}/3wolfmoon.jpg"
+        assert last_response.ok?
+        assert_equal 'image/jpeg', last_response.content_type
+      end
     end
 
   end
