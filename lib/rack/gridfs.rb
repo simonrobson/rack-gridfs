@@ -30,7 +30,7 @@ module Rack
       request = Rack::Request.new(env)
       if request.path_info.index("/#{prefix}/") == 0
         if request.path_info =~ /^\/#{prefix}\/(.{24})(\/(.+))?$/
-          gridfs_request($1)
+          gridfs_request($1, $3)
         else
           unknown
         end
@@ -39,8 +39,11 @@ module Rack
       end
     end
 
-    def gridfs_request(id)
+    def gridfs_request(id, filename)
       file = Mongo::Grid.new(db).get(BSON::ObjectID.from_string(id))
+      if filename
+        return unknown unless filename == file.filename
+      end
       [200, {'Content-Type' => file.content_type}, [file.read]]
     rescue Mongo::GridError, BSON::InvalidObjectID
       unknown

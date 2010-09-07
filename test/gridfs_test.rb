@@ -140,6 +140,12 @@ class Rack::GridFSTest < Test::Unit::TestCase
         assert last_response.ok?
         assert_equal 'image/jpeg', last_response.content_type
       end
+      
+      should "return not found when filename information is included after the id but filename does not match file" do
+        image_id = load_artifact('3wolfmoon.jpg', 'image/jpeg')
+        get "/gridfs/#{image_id}/3dogmoon.jpg"
+        assert last_response.not_found?
+      end
     end
 
   end
